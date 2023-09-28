@@ -5,7 +5,6 @@ val tax_pay = arrayOf(0.00, 5.50, 13.00, 525.00, 4098.75, 8988.90, 17500.00)
 val cummIncome = arrayOf(412.00, 512.00, 642.00, 3642.00, 20037.00, 50000.00)
 val cummTax = arrayOf(0.00, 5.50, 18.50, 543.80, 4642.25, 13631.15)
 
-
 fun SSNIT_func(gross_income: Double): Double {
     //function to calculate amount paid to SSNIT
     val ssnitReturn = gross_income * ssnitPercentage
@@ -33,32 +32,26 @@ fun calcTax(taxableIncome: Double, arrayIndex: Int, cummTax: Array<Double>, rate
     return finalTax
 }
 
-fun calcIncome(grossIncome: Double, amtToSsnit: Double, finalTax: Double): Double {
-    val temp = (grossIncome - amtToSsnit)
-    val finalIncome = temp - finalTax
-    return finalIncome
+fun calcIncome(grossIncome: Double, amtToSsnit: Double, finalTax: Double?): Double {
+    val temp = grossIncome - amtToSsnit
+    return temp - (finalTax ?: 0.0)
 }
 
 fun main() {
     println("Enter your Gross Income: ")
-    val grossIncome: String? = readLine()
-    val newGrossIncome = grossIncome?.toDouble()
-    if (newGrossIncome != null) {
-
-        val amtToSsnit = SSNIT_func(newGrossIncome)
-        val taxableIncome = calculateTaxableIncome(amtToSsnit, newGrossIncome)
-        val incomeIndex: Int = getIncomeRange(taxableIncome, chargeableIncome)
+    val grossIncomeStr: String? = readLine()
+    try {
+        val grossIncome: Double = grossIncomeStr?.toDouble() ?: 0.0
+        val amtToSsnit = SSNIT_func(grossIncome)
+        val taxableIncome = calculateTaxableIncome(amtToSsnit, grossIncome)
+        val incomeIndex = getIncomeRange(taxableIncome, chargeableIncome)
         val finalTax = calcTax(taxableIncome, incomeIndex, cummTax, rate)
-        val finalIncome = calcIncome(newGrossIncome, amtToSsnit, finalTax)
+        val finalIncome = calcIncome(grossIncome, amtToSsnit, finalTax)
 
-
-        println("Your finalIncome is: ${finalIncome}")
+        println("Your finalIncome is: $finalIncome")
         println("You'll pay $amtToSsnit to SSNIT")
-        println("And you'll pay ${finalTax} in tax")
+        println("And you'll pay $finalTax in tax")
+    } catch (e: NumberFormatException) {
+        println("Invalid input. Please enter a valid number for Gross Income.")
     }
 }
-
-
-
-
-
