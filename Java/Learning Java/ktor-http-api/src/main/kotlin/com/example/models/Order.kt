@@ -2,13 +2,7 @@ package com.example.models
 
 import kotlinx.serialization.Serializable
 
-@Serializable
-data class Order(val number: String, val contents: List<OrderItem>)
-
-@Serializable
-data class OrderItem(val item: String, val amount: Int, val price: Double)
-
-val orderStorage = listOf(Order(
+val orderStorage = mutableListOf(Order(
     "2020-04-06-01", listOf(
         OrderItem("Ham Sandwich", 2, 5.50),
         OrderItem("Water", 1, 1.50),
@@ -22,3 +16,10 @@ val orderStorage = listOf(Order(
         OrderItem("Ice Cream", 1, 2.35)
     ))
 )
+
+@Serializable
+data class Order(val number: String, val contents: List<OrderItem>)
+
+@Serializable
+data class OrderItem(val item: String, val amount: Int, val price: Double)
+

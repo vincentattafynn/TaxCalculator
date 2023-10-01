@@ -1,11 +1,12 @@
 package com.example.routes
 
+import io.ktor.server.routing.*
 import com.example.models.*
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
-import io.ktor.server.routing.*
+
 
 fun Route.customerRouting() {
     route("/customer") {
@@ -17,12 +18,12 @@ fun Route.customerRouting() {
             }
         }
         get("{id?}") {
-            val id = call.parameters["id"] ?: return@get call.respondText(
-                "Missing id",
+            val id = call.parameters["id"]?: return@get call.respondText(
+                "missing id",
                 status = HttpStatusCode.BadRequest
             )
             val customer =
-                customerStorage.find { it.id == id } ?: return@get call.respondText(
+                customerStorage.find{ it.id == id } ?: return@get call.respondText(
                     "No customer with id $id",
                     status = HttpStatusCode.NotFound
                 )
