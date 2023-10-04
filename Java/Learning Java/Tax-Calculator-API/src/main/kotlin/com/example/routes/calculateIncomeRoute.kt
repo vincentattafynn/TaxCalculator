@@ -7,6 +7,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import com.example.dao.*
 import io.ktor.server.freemarker.*
+import org.jetbrains.exposed.sql.*
 
 
 const val ssnitPercentage: Double = 0.055
@@ -47,6 +48,7 @@ fun calcIncome(grossIncome: Double, amtToSsnit: Double, finalTax: Double): Doubl
     val temp = grossIncome - amtToSsnit
     return temp - ((finalTax ?: 0.0))
 }
+
 fun Route.calculateIncome() {
     route("/calculate-income") {
         get {
@@ -54,7 +56,7 @@ fun Route.calculateIncome() {
                 //val getParameters = call.receiveParameters()
                 val firstName = call.parameters["firstName"] ?: return@get call.respondText("Bad Request", status = HttpStatusCode.BadRequest)
                 val grossIncomeStr = call.parameters["income"] ?: return@get call.respondText("Bad Request", status = HttpStatusCode.BadRequest)
-                val grossIncome = grossIncomeStr?.toDoubleOrNull() ?: 0.0
+                val grossIncome = grossIncomeStr.toDoubleOrNull() ?: 0.0
 
                 // Perform income calculations here (your existing code)
 
@@ -65,13 +67,14 @@ fun Route.calculateIncome() {
                 val finaleIncome = calcIncome(grossIncome, amtToSsnit, finalTax)
 
                 // Create a UserData object to store in your database
-                val userData = User(firstName,finaleIncome,finalTax,amtToSsnit)
+                val userData = User(firstName, finaleIncome, finalTax, amtToSsnit)
 
                 // Store the user data in your database (you'll need a database connection)
-
+                val addUserFunction = DAOFacadeImpl()
                 call.respond(userData)
-
-                call.respond(FreeMarkerContent("/calculate-income", "userResults" ))
+                addUserFunction.addNewuserResponse(
+                    firstName,finaleIncome,finalTax,amtToSsnit
+                )
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.NotFound, "Invalid input. Please check your request parameters.")
             }

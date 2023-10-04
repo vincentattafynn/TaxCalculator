@@ -1,27 +1,27 @@
 package com.example.dao
 
-import com.example.dao.*
-import com.example.models.userResponse
+import com.example.models.UserResponse
 import com.example.models.*
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class DAOFacadeImpl : DAOFacade {
 
     private fun resultRowTouserResponse(row: ResultRow) = User(
-        firstName = row[userResponse.firstName],
-        finalIncome = row[userResponse.finalIncome],
-        finalTax = row[userResponse.finalTax],
-        amtToSnit = row[userResponse.amtToSnit]
+        firstName = row[UserResponse.firstName],
+        finalIncome = row[UserResponse.finalIncome],
+        finalTax = row[UserResponse.finalTax],
+        amtToSnit = row[UserResponse.amtToSnit]
     )
 
 
     override suspend fun alluserResponse(): List<User> = dbQuery<List<User>> {
-        userResponse.selectAll().map(::resultRowTouserResponse)
+        UserResponse.selectAll().map(::resultRowTouserResponse)
     }
 
     override suspend fun userResponse(firstName: String): List<User> = dbQuery<List<User>> {
-        userResponse
-            .select { userResponse.firstName eq firstName }
+        UserResponse
+            .select { UserResponse.firstName eq firstName }
             .map(::resultRowTouserResponse)
     }
 
@@ -31,12 +31,15 @@ class DAOFacadeImpl : DAOFacade {
         finalIncome: Double,
         finalTax: Double,
         amtToSnit: Double
-    ): List<User> {
-        val insertStatement = userResponse.insert {
-            it[userResponse.firstName]
+    ):User? {
+        val insertStatement = UserResponse.insert {
+            it[UserResponse.firstName] = firstName
+            it[UserResponse.finalIncome] = finalIncome
+            it[UserResponse.finalTax] = finalTax
+            it[UserResponse.amtToSnit] = amtToSnit
         }
-        insertStatement.resultedValues?.singleOrNull()?.let(::resultRowTouserResponse)
-        return emptyList()
+
+        return insertStatement.resultedValues?.singleOrNull()?.let(::resultRowTouserResponse)
     }
 }
 

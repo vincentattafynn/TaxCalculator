@@ -12,7 +12,7 @@ import org.jetbrains.exposed.sql.*
 
 data class User(val firstName: String, val finalIncome: Double, val finalTax: Double, val amtToSnit: Double)
 
-object userResponse : Table() {
+object UserResponse : Table("userresponse") {
     val firstName = varchar("firstName",128)
     val finalIncome = double("finalIncome")
     val finalTax = double("finalTax")

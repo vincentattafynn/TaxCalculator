@@ -15,12 +15,12 @@ fun Route.orderRouting() {
             orderStorage.add(Order)
             call.respondText("Order stored correctly", status = HttpStatusCode.Created)
         }
-        get("/order/all") {
+        get("/all") {
             if (orderStorage.isNotEmpty()) {
                 call.respond(orderStorage)
             }
         }
-        get("/order/{id?}") {
+        get("/{id?}") {
             val id = call.parameters["id"] ?: return@get call.respondText("Bad Request", status = HttpStatusCode.BadRequest)
             val order = orderStorage.find { it.number == id } ?: return@get call.respondText(
                 "Not Found",

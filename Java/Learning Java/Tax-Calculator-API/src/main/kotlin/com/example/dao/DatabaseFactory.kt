@@ -8,12 +8,13 @@ import org.jetbrains.exposed.sql.transactions.experimental.*
 
 object DatabaseFactory {
     fun init() {
-        val driverClassName = "org.h2.Driver"
-        val jdbcURL = "jdbc:h2:~/incomedb"
-        val database = Database.connect(jdbcURL, driverClassName)
-
+//        val driverClassName = "org.h2.Driver"
+//        val jdbcURL = "jdbc:h2:~/incomedb"
+        val driverClassName = "com.mysql.cj.jdbc.Driver"
+        val jdbcURL = "jdbc:mysql://localhost:3306/newincomedb"
+        val database = Database.connect(jdbcURL,driverClassName,"root","yooku@12")
         transaction(database) {
-            SchemaUtils.create(userResponse)
+            SchemaUtils.createMissingTablesAndColumns(UserResponse)
         }
     }
 }
