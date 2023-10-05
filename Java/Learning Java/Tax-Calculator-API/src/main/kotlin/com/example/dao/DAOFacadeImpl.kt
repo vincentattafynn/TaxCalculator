@@ -31,7 +31,7 @@ class DAOFacadeImpl : DAOFacade {
         finalIncome: Double,
         finalTax: Double,
         amtToSnit: Double
-    ):User? {
+    ): User = dbQuery<User>{
         val insertStatement = UserResponse.insert {
             it[UserResponse.firstName] = firstName
             it[UserResponse.finalIncome] = finalIncome
@@ -39,7 +39,7 @@ class DAOFacadeImpl : DAOFacade {
             it[UserResponse.amtToSnit] = amtToSnit
         }
 
-        return insertStatement.resultedValues?.singleOrNull()?.let(::resultRowTouserResponse)
+         insertStatement.resultedValues!!.single().let(::resultRowTouserResponse)
     }
 }
 
